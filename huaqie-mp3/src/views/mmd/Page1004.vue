@@ -1,0 +1,544 @@
+<template>
+	<section>
+	
+	<el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tab-pane label="概览" name="first">
+    	<el-row class="brief">
+    	<el-col :span="6">
+    	<h3>¥{{ (balance.date)?balance.date.toFixed(2):0 }}</h3>
+    	<p>今日收入</p>
+    	</el-col>
+    	<el-col :span="6">
+    	<h3>¥{{ (balance.week)?balance.week.toFixed(2):0 }}</h3>
+    	<p>本周收入</p>
+    	</el-col>
+    	<el-col :span="6">
+    	<h3>¥{{ (balance.month)?balance.month.toFixed(2):0 }}</h3>
+    	<p>本月收入</p>
+    	</el-col>
+    	<el-col :span="6">
+    	<h3>¥{{ (balance.total)?balance.total.toFixed(2):0 }}</h3>
+    	<p>总收入</p>
+    	</el-col>
+    	</el-row>
+    </el-tab-pane>
+    <el-tab-pane label="收入明细" name="second">
+    	<!--工具条-->
+		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+			<el-form :inline="true" :model="filters">
+				<el-form-item>
+					<el-input v-model="filters.name" placeholder="订单号"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" v-on:click="getTransactions">查询</el-button>
+				</el-form-item>
+			</el-form>
+		</el-col>
+
+		<!--列表-->
+		<el-table :data="transactions" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+			
+			<el-table-column type="index" width="60">
+			</el-table-column>
+			<el-table-column prop="amount" label="金额" width="120" sortable>
+			</el-table-column>
+			<el-table-column prop="basic.orderId" label="订单号" width="300"  sortable>
+			</el-table-column>
+			<el-table-column prop="basic.name" label="付款人姓名" width="200" >
+			</el-table-column>
+			<el-table-column prop="basic.text" label="备注" width="200" sortable>
+			</el-table-column>
+			<el-table-column prop="created" label="支付时间" :formatter='formatDate' sortable>
+			</el-table-column>
+			
+			<!-- <el-table-column label="操作" width="150">
+				<template scope="scope">
+					
+					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+					
+				</template>
+			</el-table-column> -->
+		</el-table>
+
+		<!--工具条-->
+		<el-col :span="24" class="toolbar">
+			
+			<el-pagination layout="total, prev, pager, next" @current-change="handleCurrentChange1" :page-size="10" :total="total1" style="float:right;">
+			</el-pagination>
+		</el-col>
+
+    </el-tab-pane>
+    <el-tab-pane label="销售员收入明细" name="third">
+    	<!--工具条-->
+		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+			<el-form :inline="true" :model="filters">
+				<el-form-item>
+					<el-input v-model="filters.peopleId" placeholder="用户ID"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" v-on:click="query2">查询</el-button>
+				</el-form-item>
+			</el-form>
+		</el-col>
+
+		<!--列表-->
+		<el-table :data="peopleTransactions" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+			
+			<el-table-column type="index" width="60">
+			</el-table-column>
+			<el-table-column prop="peopleId" label="用户ID" width="300">
+			</el-table-column>
+			<el-table-column prop="amount" label="金额" width="150" sortable>
+			</el-table-column>
+			<el-table-column prop="basic.orderId" label="订单号" width="300"  >
+			</el-table-column>
+			<el-table-column prop="basic.text" label="备注" width="300" >
+			</el-table-column>
+			<el-table-column prop="created" label="交易时间" :formatter="formatDate" sortable>
+			</el-table-column>
+			
+			<!-- <el-table-column label="操作" width="150">
+				<template scope="scope">
+				
+				</template>
+			</el-table-column> -->
+		</el-table>
+
+		<!--工具条-->
+		<el-col :span="24" class="toolbar">
+			<el-pagination layout="total, prev, pager, next" @current-change="handleCurrentChange2" :page-size="10" :total="total2" style="float:right;">
+			</el-pagination>
+		</el-col>
+
+    </el-tab-pane>
+    <el-tab-pane label="销售员提现明细" name="fourth">
+    	<!--工具条-->
+		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+			<el-form :inline="true" :model="filters">
+				<el-form-item>
+					<el-input v-model="filters.phone" placeholder="手机号"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" v-on:click="queryWithdraw">查询</el-button>
+				</el-form-item>
+			</el-form>
+		</el-col>
+
+		<!--列表-->
+		<el-table :data="withdraws" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+			
+			<el-table-column type="index" width="60">
+			</el-table-column>
+			<el-table-column prop="amount" label="提现金额" width="120" sortable>
+			</el-table-column>
+			<el-table-column prop="basic.bank" label="银行" width="200" >
+			</el-table-column>
+			<el-table-column prop="basic.account" label="账户号码" width="200" >
+			</el-table-column>
+			<el-table-column prop="basic.name" label="账户名" width="200" >
+			</el-table-column>
+			<el-table-column prop="basic.phone" label="手机号" width="200" >
+			</el-table-column>
+			<el-table-column label="提现状态"  width="200" >
+				<template scope="scope">
+					<el-tag type="danger" v-if="scope.row.step==1" >未提现</el-tag>
+					<el-tag type="success" v-if="scope.row.step==2" >已提现</el-tag>
+				</template>
+			</el-table-column>
+			<el-table-column prop="created" label="提交时间" :formatter="formatDate" width="auto" sortable>
+			</el-table-column>
+			
+			<el-table-column label="操作" width="150">
+				<template scope="scope">
+					<el-button v-if="scope.row.step==1" type="primary" size="small" @click="handleApprove(scope.$index, scope.row)">确认提现</el-button>
+					<!--<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+					-->
+				</template>
+			</el-table-column>
+		</el-table>
+
+		<!--工具条-->
+		<el-col :span="24" class="toolbar">
+			<el-pagination layout="total, prev, pager, next" @current-change="handleCurrentChange3" :page-size="10" :total="total3" style="float:right;">
+			</el-pagination>
+		</el-col>
+
+    </el-tab-pane>
+   
+  </el-tabs>
+		
+		
+
+		<!--编辑界面-->
+		<el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
+			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
+				<el-form-item label="姓名" prop="name">
+					<el-input v-model="editForm.name" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="性别">
+					<el-radio-group v-model="editForm.sex">
+						<el-radio class="radio" :label="1">男</el-radio>
+						<el-radio class="radio" :label="0">女</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item label="年龄">
+					<el-input-number v-model="editForm.age" :min="0" :max="200"></el-input-number>
+				</el-form-item>
+				<el-form-item label="生日">
+					<el-date-picker type="date" placeholder="选择日期" v-model="editForm.birth"></el-date-picker>
+				</el-form-item>
+				<el-form-item label="地址">
+					<el-input type="textarea" v-model="editForm.addr"></el-input>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="editFormVisible = false">取消</el-button>
+				<el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
+			</div>
+		</el-dialog>
+
+		<!--新增界面-->
+		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
+			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
+				<el-form-item label="姓名" prop="name">
+					<el-input v-model="addForm.name" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="性别">
+					<el-radio-group v-model="addForm.sex">
+						<el-radio class="radio" :label="1">男</el-radio>
+						<el-radio class="radio" :label="0">女</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item label="年龄">
+					<el-input-number v-model="addForm.age" :min="0" :max="200"></el-input-number>
+				</el-form-item>
+				<el-form-item label="生日">
+					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.birth"></el-date-picker>
+				</el-form-item>
+				<el-form-item label="地址">
+					<el-input type="textarea" v-model="addForm.addr"></el-input>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="addFormVisible = false">取消</el-button>
+				<el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+			</div>
+		</el-dialog>
+	</section>
+</template>
+
+<script>
+	import util from '../../common/js/util'
+	//import NProgress from 'nprogress'
+	import moment from 'moment'
+	import withdraw from '@/components/mmd/withdraw'
+	import { getBankBrief, getTransactionListPage, getPeopleTransactionListPage, getWithdrawList, setWithdrawApproveMMD } from '../../api/api';
+
+
+	export default {
+		components: {
+			withdraw
+		},
+		data() {
+			return {
+				balance: {},
+				filters: {
+					name: '',
+					phone: '',
+					peopleId: ''
+				},
+				activeName: 'first',
+				transactions: [],
+				users: [],
+				total1: 0,
+				page1: 1,
+				peopleTransactions: [],
+				page2: 1,
+				total2: 0,
+				withdraws: [],
+				page3: 1,
+				total3: 0,
+				listLoading: false,
+				sels: [],//列表选中列
+
+				editFormVisible: false,//编辑界面是否显示
+				editLoading: false,
+				editFormRules: {
+					name: [
+						{ required: true, message: '请输入姓名', trigger: 'blur' }
+					]
+				},
+				//编辑界面数据
+				editForm: {
+					id: 0,
+					name: '',
+					sex: -1,
+					age: 0,
+					birth: '',
+					addr: ''
+				},
+
+				addFormVisible: false,//新增界面是否显示
+				addLoading: false,
+				addFormRules: {
+					name: [
+						{ required: true, message: '请输入姓名', trigger: 'blur' }
+					]
+				},
+				//新增界面数据
+				addForm: {
+					name: '',
+					sex: -1,
+					age: 0,
+					birth: '',
+					addr: ''
+				}
+
+			}
+		},
+		methods: {
+			//性别显示转换
+			formatSex: function (row, column) {
+				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
+			},
+			formatDate: function (row, column) {
+				return moment(row.created).format('YYYY-MM-DD HH:mm:ss')
+			},
+			formatStep: function (row, column) {
+				return (row.step==1)?'未提现':'已提现'
+			},
+			handleCurrentChange1(val) {
+				this.page1 = val;
+				this.getTransactions();
+			},
+			handleCurrentChange2(val) {
+				this.page2 = val;
+				this.getPeopleTransactions();
+			},
+			handleCurrentChange3(val) {
+				this.page3 = val;
+				this.getWithdraws();
+			},
+			handleClick() {
+
+			},
+			//获取用户列表
+			getTransactions() {
+				this.listLoading = true;
+				//NProgress.start();
+				/*
+				getPeopleListPage(para).then((res) => {
+					if(res.code){
+						this.$message.error({
+							message: res.message
+						})
+						return
+					}
+					this.total = res.data.total;
+					this.users = res.data.users;
+					this.listLoading = false;
+					//NProgress.done();
+				});
+				*/
+				getBankBrief({}).then(res => {
+					this.balance = res.data
+				})
+				getTransactionListPage({
+					page: this.page1,
+					size: 10,
+					orderId: this.filters.name,
+				}).then(res => {
+					this.listLoading = false
+					console.log('res', res)
+					this.total1 = res.data.total
+					this.transactions = res.data.list
+				})
+			},
+			getPeopleTransactions() {
+				this.listLoading = true;
+				getPeopleTransactionListPage({
+					flag: (this.filters.peopleId)?'':1,
+					peopleId: this.filters.peopleId,
+					page: this.page2,
+					size: 10
+				}).then(res => {
+					this.listLoading = false
+					console.log('peopleTransactions', res)
+					this.total2 = res.data.total
+					this.peopleTransactions = res.data.list
+				})
+			},
+			getWidthdraws() {
+				getWithdrawList({
+					phone: this.filters.phone,
+					page: this.page3,
+					size: 10
+				}).then(res => {
+					this.listLoading = false
+					console.log('getWithdrawList', res)
+					this.total3 = res.data.total
+					this.withdraws = res.data.list
+				})
+			},
+			//删除
+			handleDel: function (index, row) {
+				this.$confirm('确认删除该记录吗?', '提示', {
+					type: 'warning'
+				}).then(() => {
+					this.listLoading = true;
+					//NProgress.start();
+					let para = { id: row.id };
+					removeUser(para).then((res) => {
+						this.listLoading = false;
+						//NProgress.done();
+						this.$message({
+							message: '删除成功',
+							type: 'success'
+						});
+						this.getTransactions();
+					});
+				}).catch(() => {
+
+				});
+			},
+			//显示编辑界面
+			handleEdit: function (index, row) {
+				this.editFormVisible = true;
+				this.editForm = Object.assign({}, row);
+			},
+			//显示新增界面
+			handleAdd: function () {
+				this.addFormVisible = true;
+				this.addForm = {
+					name: '',
+					sex: -1,
+					age: 0,
+					birth: '',
+					addr: ''
+				};
+			},
+			//编辑
+			editSubmit: function () {
+				this.$refs.editForm.validate((valid) => {
+					if (valid) {
+						this.$confirm('确认提交吗？', '提示', {}).then(() => {
+							this.editLoading = true;
+							//NProgress.start();
+							let para = Object.assign({}, this.editForm);
+							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
+							editUser(para).then((res) => {
+								this.editLoading = false;
+								//NProgress.done();
+								this.$message({
+									message: '提交成功',
+									type: 'success'
+								});
+								this.$refs['editForm'].resetFields();
+								this.editFormVisible = false;
+								this.getTransactions();
+							});
+						});
+					}
+				});
+			},
+			//新增
+			addSubmit: function () {
+				this.$refs.addForm.validate((valid) => {
+					if (valid) {
+						this.$confirm('确认提交吗？', '提示', {}).then(() => {
+							this.addLoading = true;
+							//NProgress.start();
+							let para = Object.assign({}, this.addForm);
+							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
+							addUser(para).then((res) => {
+								this.addLoading = false;
+								//NProgress.done();
+								this.$message({
+									message: '提交成功',
+									type: 'success'
+								});
+								this.$refs['addForm'].resetFields();
+								this.addFormVisible = false;
+								this.getTransactions();
+							});
+						});
+					}
+				});
+			},
+			//批量删除
+			handleApprove: function (index, row) {
+				this.$confirm('确认该笔提现请求已提现吗？', '提示', {
+					type: 'warning'
+				}).then(() => {
+					this.listLoading = true;
+					//NProgress.start();
+					let para = { withdrawId: row.withdrawId };
+					setWithdrawApproveMMD(para).then((res) => {
+						this.listLoading = false;
+						//NProgress.done();
+						this.$message({
+							message: '确认提现成功',
+							type: 'success'
+						});
+						this.getWidthdraws()
+					});
+				}).catch(() => {
+
+				});
+			},
+			selsChange: function (sels) {
+				this.sels = sels;
+			},
+			//批量删除
+			batchRemove: function () {
+				var ids = this.sels.map(item => item.id).toString();
+				this.$confirm('确认删除选中记录吗？', '提示', {
+					type: 'warning'
+				}).then(() => {
+					this.listLoading = true;
+					//NProgress.start();
+					let para = { ids: ids };
+					batchRemoveUser(para).then((res) => {
+						this.listLoading = false;
+						//NProgress.done();
+						this.$message({
+							message: '删除成功',
+							type: 'success'
+						});
+						this.getTransactions();
+					});
+				}).catch(() => {
+
+				});
+			},
+			query() {
+				this.page = 1
+				this.getTransactions()
+			},
+			query2() {
+				this.page2 = 1
+				this.getPeopleTransactions()
+			},
+			queryWithdraw() {
+				this.page3 = 1
+				this.getWidthdraws()
+			}
+		},
+		mounted() {
+			this.getTransactions();
+			this.getPeopleTransactions()
+			this.getWidthdraws()
+		}
+	}
+
+</script>
+
+<style scoped>
+.brief h3{
+	font-size: 19px;
+}
+.brief p{
+	color: #333333;
+}
+</style>

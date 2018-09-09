@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>云API</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <script src="../script/jquery.min.js"></script>
+      <script src="../script/fastclick.min.js"></script>
+      <script>
+          $(function() {  
+              FastClick.attach(document.body);  
+          });  
+      </script>
+    <style type="text/css">
+    body{
+        height: auto;
+    }
+    .aui-card{
+    	margin-top: 10px;
+    }
+    .aui-pull-right{
+    	padding-right: 15px;
+    	vertical-align: middle;
+    }
+    .aui-pull-right.pr-10 {
+      padding-right: 10px;
+    }
+    .aui-switch-body.pt-25 {
+      box-sizing: border-box;
+      padding-top: 25px;
+    }
+    select{
+      margin-bottom: 0;
+    }
+    .aui-switch-title.vc{
+      line-height: 40px;
+    }
+    </style>
+
+</head>
+<body>
+<div class="aui-content aui-card">
+    <ul class="aui-list-view">
+        <li class="aui-list-view-cell aui-switch-body">
+            <div class="aui-switch-title">声音提示</div>
+            <input type="checkbox" id="notifyEnabled" name="notifyEnabled" class="aui-switch aui-switch-success aui-pull-right" checked>
+        </li>
+    </ul>
+</div>
+
+<div class="aui-content aui-card">
+    <div class="aui-form">
+        <div class="aui-list-view-cell aui-switch-body">
+            <label class="aui-switch-title vc">收钱提示音</label>
+            <div class="aui-pull-right pr-10">
+                <select id="notifyVoice">
+                  <option value='xiaoyan'>小燕</option>
+                  <option value='xiaoyu'>小宇</option>
+                  <option value='catherine'>凯瑟琳</option>
+                  <option value='vimary'>玛丽</option>
+                  <option value='vixy'>小研</option>
+                  <option value='vixq'>小琪</option>
+                  <option value='vixf'>小峰</option>
+                  <option value='vixl'>小梅</option>
+                  <option value='vixyun'>小芸</option>
+                  <option value='vixr'>小蓉（四川话）</option>
+                  <option value='vixk'>小坤</option>
+                  <option value='vixqa'>小强</option>
+                  <option value='vixying'>小莹</option>
+                  <option value='vixx'>小新</option>
+                  <option value='vinn'>楠楠</option>
+                  <option value='vils'>老孙</option>
+                </select>
+            </div>    
+        </div>
+        
+    </div>
+</div>
+
+<div class="aui-content aui-card">
+    <ul class="aui-list-view">
+        <li class="aui-list-view-cell" onclick="go('updatePassword')">
+            <a class=" aui-arrow-right">
+<span>修改密码</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<script src="../script/store.min.js"></script>
+<script src="../script/sweetalert2.min.js"></script>
+<script src="../script/template-web.js"></script>
+<script src="../script/timeago.min.js"></script>
+<script type="text/javascript">
+  $('#notifyVoice').change(function(){
+  	const value = $(this).children('option:selected').val()
+  	store.set('notifyVoice', value)
+  	var speechRecognizer = api.require('speechRecognizer');
+    speechRecognizer.read({
+        readStr: '已收钱',
+        speed: 60,
+        volume: 60,
+        voice: value,
+        rate: 16000
+    }, function(ret, err) {
+        
+    });
+  	 
+  })
+  var notifyEnabled = []
+  $('#notifyEnabled').change(function(){
+  		notifyEnabled = []
+  	 	$('input[name="notifyEnabled"]:checked').each(function(){      
+    		notifyEnabled.push($(this).val());
+  		})
+  		store.set('notifyEnabled', (notifyEnabled.length)?true:false)
+  })
+  const go = function (v) {
+        api.openWin({
+            name: v,
+            url: './'+v+'.html'
+        });
+    }
+  apiready = function(){
+  	if(store.get('notifyVoice'))
+      $('#notifyVoice').val(store.get('notifyVoice'))
+  }
+      
+</script>
+</body>
+</html>

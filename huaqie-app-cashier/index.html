@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+
+    <style type="text/css">
+    html,body{
+        height: 100%;
+    }
+    #wrap{
+        height: 100%;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-flex-flow: column;
+               flex-flow: column;
+    }
+    #header{
+        text-align: center; background-color: #EF6C00; color: #fff;
+        width: 100%;
+    }
+    #header h1{
+        font-size: 20px; height: 44px; line-height: 44px; margin: 0em; color: #fff;
+    }
+    #main{
+        -webkit-box-flex: 1; 
+        -webkit-flex: 1;
+        flex: 1;
+    }
+    #footer{
+        height: 30px; line-height: 30px;
+        background-color: #81a9c3; 
+        width: 100%;
+        text-align: center;
+    }
+    #footer h5{
+        color: white;
+    }
+    .con{font-size: 28px; text-align: center;}
+    .left{
+        position: absolute;
+        left: 15px;
+        top: 31px;
+    }
+    .right{
+        position: absolute;
+        right: 15px;
+        top: 31px;
+    }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <div id="header">
+            <h1>花茄收钱宝</h1><!--<span class="left" onclick="openNotifies()"><img src="./image/notify.svg" style="width:32px"></span>
+            <span class="right" onclick="openAccount()"><img src="./image/user.svg" style="width:32px"></span>
+            -->
+        </div>
+        <div id="main">
+                
+        </div>
+        
+    </div>
+</body>
+<script type="text/javascript" src="./script/api.js"></script>
+<script src="script/store.min.js"></script>
+<script type="text/javascript">
+    var JPUSH = null
+    var openNotifies = function () {
+        api.openWin({
+            name: 'notifies',
+            url: './html/notifies.html'
+        });
+    }
+    var openAccount = function () {
+        api.openWin({
+            name: 'orders',
+            url: './html/account.html'
+        });
+    }
+    var bindJpush = function (people) {
+        if(JPUSH){
+            JPUSH.resumePush()
+            JPUSH.bindAliasAndTags({
+                alias: people
+            },function(ret) {
+                
+            })
+        }
+        
+    }
+    var setListener = function() {
+        if(!JPUSH)
+            return
+        JPUSH.setListener(
+            function(ret) {
+                api.execScript({
+                    name: 'root',
+                    frameName: 'notifies',
+                    script: 'refresh()'
+                })
+                api.toast({
+                    msg: ret.content
+                })
+                if(store.get('notifyEnabled')){
+                    var speechRecognizer = api.require('speechRecognizer');
+                    speechRecognizer.read({
+                        readStr: '已收钱',
+                        speed: 60,
+                        volume: 60,
+                        voice: store.get('notifyVoice'),
+                        rate: 16000
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            //ret.speakProgress
+                        } else {
+                            //api.alert({ msg: err.msg });
+                        }
+                    });
+                 }
+                /*
+                 api.startPlay({
+                    path: 'widget://audio/notify.mp3'
+                }, function(ret, err) {
+                    if (ret) {
+                        
+                    } else {
+                        //alert(JSON.stringify(err));
+                    }
+                });
+                 */
+            }
+        );
+    }
+    var logout = function() {
+        if(JPUSH)
+            JPUSH.stopPush()
+    }
+    apiready = function(){
+        var header = $api.byId('header');
+        //适配iOS 7+，Android 4.4+状态栏
+        $api.fixStatusBar(header);
+
+        api.setStatusBarStyle({
+            style: 'light'
+        });
+
+
+        var headerPos = $api.offset(header);
+        var main = $api.byId('main');
+        var mainPos = $api.offset(main);
+
+        api.openFrameGroup({
+            name: 'group',
+            scrollEnabled: true,
+            index: 1,
+            rect: {
+                x: 0,
+                y: headerPos.h,
+                w: 'auto',
+                h: mainPos.h
+            },
+            frames: [{
+                name: 'notifies',
+                url: 'html/notifies_frame.html',
+                bgColor: '#fff',                
+                hScrollBarEnabled: false
+            }, {
+                name: 'main',
+                url: 'html/main.html',
+                bgColor: '#fff',
+                vScrollBarEnabled: false,                
+                hScrollBarEnabled: false 
+            }, {
+                name: 'account',
+                url: 'html/account_frame.html',
+                bgColor: '#fff',
+                vScrollBarEnabled: false,                
+                hScrollBarEnabled: false
+            }]
+        }, function(ret, err) {
+            if(index == 0){
+                api.execScript({
+                    name: 'root',
+                    frameName: 'notifies',
+                    script: 'refresh()'
+                })
+            }
+        });
+
+
+        JPUSH = api.require('ajpush');
+        JPUSH.init(function(ret) {
+          if (ret && ret.status){
+              //success
+              api.toast({
+                  msg: '推送初始化成功',
+                  duration: 2000,
+                  location: 'bottom'
+              });
+
+          }
+        })
+        setListener()
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err) {
+            api.toLauncher()
+        });
+
+        if(!store.get('me')){
+            api.openWin({
+                name: 'signIn',
+                url: 'html/signIn.html'
+            })
+        }
+
+    };
+</script>
+</html>

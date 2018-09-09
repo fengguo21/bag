@@ -1,0 +1,6 @@
+/* el-form部件 */
+
+/* el-input 小号 width约为217px与普通 el-select同寛 */
+.small-el-input.el-input {
+	width: 217px;
+}

@@ -1,0 +1,41 @@
+@bordercolor: #f6f6f6;
+.loginbox {
+  padding: 1.015625rem .5rem;
+  .inputbox {
+    border: 1px solid @bordercolor;
+    border-radius: @radius;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    margin-bottom: .3125rem;
+    padding-left: 1.25rem;
+    input[type="text"] {
+      border: none;
+      border-left: 1px solid @bordercolor;
+      height: 100%;
+      padding-left: .28125rem;
+      font-size:@ttsize2;
+    }
+  }
+  .inputbox1 {
+    background: url(~assets/images/mc/icon-phone.jpg) .390625rem center no-repeat;
+    background-size: .46875rem auto;
+  }
+  .inputbox2 {
+    background: url(~assets/images/mc/icon-confcode.jpg) .390625rem center no-repeat;
+    background-size: .46875rem auto;
+    input[type="text"] {
+      width: 50%;
+    }
+  }
+  .btn_code {
+    background: @iconcolor;
+    width: 3rem;
+    height: 100%;
+    border-radius: 0 5px 5px 0px;
+    float: right;
+    border: none;
+    color: #fff;
+    font-size:@ttsize;
+  }
+
+}

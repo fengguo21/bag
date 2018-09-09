@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>云API</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <style type="text/css">
+    body{
+        height: auto;
+        padding-top: 10px;
+    }
+    .aui-card{
+    	padding: 10px;
+    }
+    .center{
+    	text-align: center;
+    }
+    .card-title{
+    	 width:100%;
+    	 border-bottom:1px solid #e3e3e3;
+    	 padding-bottom: 5px; 
+    	 margin-bottom: 10px;
+    	 text-align: left;
+    }
+    .date{
+    	border: 1px solid #e3e3e3;
+    	border-radius: 20px;
+    	padding: 0 10px;
+    	display: inline-block;
+    	margin-bottom: 5px;
+    }
+    #tips{
+    	margin: 30px 0;
+    }
+    </style>
+
+</head>
+<body>
+	<div class="aui-content aui-card center">
+	<div class="card-title">趋势图</div>
+		<span class="date" id="startDate" onclick="selectDate(1)"></span> ~ <span class="date" id="endDate" onclick="selectDate(2)"></span>
+		<canvas id="myChart"></canvas>
+
+		<canvas id="myChart2"></canvas>
+		<p id="tips"></p>
+
+	</div>
+
+	<div class="aui-content aui-card">
+		<div class="card-title">今日</div>
+		<div style="display:flex">
+		<div style="flex:1">
+		<p>微信：</p>
+		<p id="today-wepay">¥0.00</p>
+		</div>
+		<div style="flex:1">
+		<p>支付宝：</p>
+		<p id="today-alipay">¥0.00</p>
+		</div>
+		<div style="flex:1">
+		<p>总计：</p>
+		<p id="today-total">¥0.00</p>
+		</div>
+		</div>
+	</div>
+
+	<div class="aui-content aui-card">
+		<div class="card-title">昨日</div>
+		<div style="display:flex">
+		<div style="flex:1">
+		<p>微信：</p>
+		<p id="yesterday-wepay">¥0.00</p>
+		</div>
+		<div style="flex:1">
+		<p>支付宝：</p>
+		<p id="yesterday-alipay">¥0.00</p>
+		</div>
+		<div style="flex:1">
+		<p>总计：</p>
+		<p id="yesterday-total">¥0.00</p>
+		</div>
+		</div>
+	</div>
+
+	<div class="aui-content aui-card">
+		<div class="card-title">本月</div>
+		<div style="display:flex">
+		<div style="flex:1">
+		<p>微信：</p>
+		<p id="month-wepay">¥0.00</p>
+		</div>
+		<div style="flex:1">
+		<p>支付宝：</p>
+		<p id="month-alipay">¥0.00</p>
+		</div>
+		<div style="flex:1">
+		<p>总计：</p>
+		<p id="month-total">¥0.00</p>
+		</div>
+		</div>
+	</div>
+</body>
+
+<script src="../script/Chart.min.js"></script>
+<script src="../script/zepto.min.js"></script>
+<script src="../script/store.min.js"></script>
+<script src="../script/huaqie.api.js"></script>
+<script src="../script/moment.min.js"></script>
+
+
+<script type="text/javascript">
+
+	var startDate = ''
+	var endDate = ''
+
+	var selectDate = function(v) {
+		api.openPicker({
+		    type: 'date',
+		    date: (v == 1)?startDate:endDate,
+		    title: (v == 1)?'选择开始日期':'选择结束日期'
+		}, function(ret, err) {
+		    if (ret) {
+		        var date = ret.year+'-'+((ret.month > 9)?ret.month:'0'+ret.month)+'-'+((ret.day > 9)?ret.day:'0'+ret.day)
+		        if(v == 1 && date > endDate){
+		        	api.toast({
+		        		msg: '开始日期不能大于结束日期'
+		        	})
+		        	return
+		        }else if(v == 2 && date < startDate){
+		        	api.toast({
+		        		msg: '结束日期不能小于开始日期'
+		        	})
+		        	return
+		        }
+		        if(v == 1){
+		        	startDate = date
+		        	$('#startDate').text(date)
+		        }else{
+		        	endDate = date
+		        	$('#endDate').text(date)
+		        }
+		        updateTrend()
+		    }
+		});
+	}
+
+	var updateSum = function() {
+		huaqie.get('analytics/findReportByAppId', {
+        }, function(res) {
+
+        	if(res.code){
+        		api.alert({
+        			msg: res.message
+        		})
+        		return
+        	}
+
+        	var data = res.data
+
+			$('#today-wepay').text('¥'+data.today.wepay.toFixed(2))
+			$('#today-alipay').text('¥'+data.today.alipay.toFixed(2))
+			$('#today-total').text('¥'+(data.today.wepay+data.today.alipay).toFixed(2))
+
+			$('#yesterday-wepay').text('¥'+data.yesterday.wepay.toFixed(2))
+			$('#yesterday-alipay').text('¥'+data.yesterday.alipay.toFixed(2))
+			$('#yesterday-total').text('¥'+(data.yesterday.wepay+data.yesterday.alipay).toFixed(2))
+
+			$('#month-wepay').text('¥'+data.month.wepay.toFixed(2))
+			$('#month-alipay').text('¥'+data.month.alipay.toFixed(2))
+			$('#month-total').text('¥'+(data.month.wepay+data.month.alipay).toFixed(2))
+
+		})
+	}
+
+	var updateTrend = function() {
+		var data = {
+			line: {
+				labels: [],
+				total: [],
+				wepay: [],
+				alipay: []
+			},
+			pie: {
+				wepay: 0,
+				alipay: 0
+			}
+		}
+		
+		huaqie.get('analytics/findSeriesByAppId', {
+            startDate: startDate,
+            endDate: endDate
+        }, function(res) {
+        	if(res.code){
+        		api.alert({
+        			msg: res.message
+        		})
+        		return
+        	}
+
+        	res.data.forEach(function(e) {
+        		var wepay = ('tradeAmountWepay' in e)?e.tradeAmountWepay:0
+        		var alipay = ('tradeAmountAlipay' in e)?e.tradeAmountAlipay:0
+        		if(wepay == 0 && alipay == 0)
+        			return
+        		data.line.labels.push(e.date)
+        		data.line.wepay.push(wepay.toFixed(2))
+        		data.line.alipay.push(alipay.toFixed(2))
+        		data.line.total.push((wepay+alipay).toFixed(2))
+        		data.pie.wepay += wepay
+        		data.pie.alipay += alipay
+        	})
+
+			if(data.line.labels.length == 0){
+				$('#myChart').hide()
+				$('#myChart2').hide()
+				$('#tips').text('该时段没有交易数据')
+			}else{
+				$('#myChart').show()
+				$('#myChart2').show()
+				$('#tips').text('')
+			}
+
+
+			
+			// 线图
+			var ctx = document.getElementById('myChart').getContext('2d');
+
+			var chart = new Chart(ctx, {
+			    type: 'line',
+			    data: {
+			        labels: data.line.labels,
+			        datasets: [{
+			            label: "总收入",
+			            backgroundColor: 'transparent',
+			            borderColor: '#e63f72',
+			            data: data.line.total,
+			        },{
+			            label: "微信",
+			            backgroundColor: 'transparent',
+			            borderColor: '#3dab2d',
+			            data: data.line.wepay,
+			        },{
+			            label: "支付宝",
+			            backgroundColor: 'transparent',
+			            borderColor: '#4192e0',
+			            data: data.line.alipay,
+			        }]
+			    },
+			    options: {}
+			})
+
+			// 饼图
+			var data2 = {
+			    datasets: [{
+			        data: [data.pie.wepay, data.pie.alipay],
+			        backgroundColor: [
+			                '#3dab2d',
+			                'rgba(54, 162, 235, 1)'
+			            ]
+			    }],
+			    labels: [
+			        '微信',
+			        '支付宝'
+			    ],   
+			}
+			var ctx2 = document.getElementById('myChart2').getContext('2d')
+			var myPieChart = new Chart(ctx2,{
+			    type: 'doughnut',
+			    data: data2,
+			    options: {}
+			})
+		})
+	}
+
+	apiready = function(){
+		startDate = moment().subtract(30, 'days').format('YYYY-MM-DD')
+		endDate = moment().format('YYYY-MM-DD')
+		$('#startDate').text(startDate)
+		$('#endDate').text(endDate)
+		updateTrend()
+		updateSum()
+    };
+</script>
+</html>

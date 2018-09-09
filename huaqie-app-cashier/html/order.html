@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title></title>
+		<!--AUI样式框架-->
+		<link rel="stylesheet" type="text/css" href="../css/aui-win.css" />
+		<script src="../script/jquery.min.js"></script>
+	    <script src="../script/fastclick.min.js"></script>
+	    <script>
+	        $(function() {  
+	            FastClick.attach(document.body);  
+	        });  
+	    </script>
+		<style type="text/css">
+			.aui-bar{
+				padding-top: 20px;
+				height: 44px;
+				line-height: 44px;
+			}
+			.aui-bar-primary{
+				background-color: #EF6C00;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav aui-bar-primary" id="aui-header">
+			<a class="aui-pull-left" onclick="api.closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+			<div class="aui-title">
+				订单详情
+			</div>
+		</header>
+	</body>
+	<!--APICloud自带前端脚本-->
+	<script type="text/javascript" src="../script/api.js"></script>
+
+	<script type="text/javascript">
+
+		apiready = function() {
+			if(api.systemType != 'ios'){
+				$('#aui-header').css('padding-top', 25)
+			}
+			api.openFrame({
+			    name: 'order_frame',
+			    url: './order_frame.html',
+			    rect: {
+			        x: 0,
+			        y: (api.systemType == 'ios')?64:69,
+			        w: 'auto',
+			        h: 'auto'
+			    },
+			    pageParam: {
+			        orderId: api.pageParam.orderId
+			    }
+			})
+		}
+	</script>
+</html>

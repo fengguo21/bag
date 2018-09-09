@@ -1,0 +1,52 @@
+#myevent_box{min-height:100%;background: #f0f2f6;position:absolute;width:100%;overflow:scroll;}
+  #myevent_box .tab {
+    padding: 0.28125rem 0;
+    background:#fff;
+    padding-left:5%;
+  }
+.fixedtop{position:fixed;left:0px;top:0px;width:100%;min-height:1.8rem; }
+  #myevent_box .tab a {
+    text-decoration: none;
+    height: 0.9375rem;
+    width: 31%;
+    display: block;
+    float: left;
+    font-size: @ttsize2;
+    color: #303030;
+    border: 1px solid #ccc;
+    text-align: center;
+    line-height: 0.9375rem;
+  }
+
+  #myevent_box .tab a:nth-child(1) {
+    border-radius: 5px;
+    border-radius: 5px 0 0 5px;
+  }
+
+  #myevent_box .tab a:nth-child(2) {
+    border-left: none;
+    border-right: none;
+  }
+
+  #myevent_box .tab a:nth-child(3) {
+    border-radius: 5px;
+    border-radius: 0px 5px 5px 0px;
+  }
+
+  #myevent_box .tab .router-link-active,#myevent_box .tab a.active {
+    color: #fff;
+    background: #2a292c;
+    border: 1px solid #2a292c;
+  }
+  .eventpnewbox {
+    background:#f0f2f6 url('~assets/images/event-bg.jpg') left 3.2rem repeat-x;
+    /* padding: 0.46875rem 5%; */
+    background-size: .78125rem .390625rem;
+    /*position: absolute;
+    left: 0px;
+    top: 4rem;*/
+  
+    width: 90%;
+    -webkit-overflow-scrolling :touch;
+    /*z-index: 1;*/
+ }

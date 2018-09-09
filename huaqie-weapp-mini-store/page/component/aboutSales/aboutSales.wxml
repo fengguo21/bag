@@ -1,0 +1,8 @@
+<view class="box">
+<view class="title">{{title}}</view>
+<view class="info">更新于：{{updated}}</view>
+<view class="p" wx:for="{{texts}}" wx:key="item">
+{{item}}
+</view>
+
+</view>

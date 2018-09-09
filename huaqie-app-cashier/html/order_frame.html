@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>云API</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <script src="../script/jquery.min.js"></script>
+    <script src="../script/fastclick.min.js"></script>
+    <script>
+        $(function() {  
+            FastClick.attach(document.body);  
+        });  
+    </script>
+    <style type="text/css">
+    body{
+        height: auto;
+        padding: 10px;
+    }
+    #refund{
+      display: none;
+    }
+    #show-btn, #ok-btn, #cancel-btn{
+      display: none;
+    }
+    #ok-btn{
+      background-color: #ef6c02;
+      color: white;
+    }
+    #amount{
+      color: #EF6C00;
+      font-size: 21px;
+      text-align: center;
+      width: 100%;
+    }
+    .btn-box{
+      text-align: center;
+      margin-top: 20px;
+    }
+    input{
+      display: block;
+      margin: 0 auto;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    button{
+      width: 50%;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      padding: 10px 0;
+    }
+    </style>
+
+</head>
+<body>
+
+
+<h2 id="amount"></h2>
+<h2 id="name" ></h2>
+<h2 id="created" ></h2>
+<h2 id="step" ></h2>
+<h2 id="channel" ></h2>
+<h2 id="note" ></h2>
+<!-- <h2 id="refundAmount"></h2> -->
+
+<!-- <div class="btn-box">
+<input id="refund" type="number" placeholder="退款金额" />
+<button id="show-btn" onclick="refund()">退款</button>
+<button id="ok-btn" onclick="refundOk()">确认退款</button>
+<button id="cancel-btn" onclick="cancel()">取消</button>
+</div> -->
+
+
+<script src="../script/store.min.js"></script>
+<script src="../script/sweetalert2.min.js"></script>
+<script src="../script/template-web.js"></script>
+<script src="../script/moment.min.js"></script>
+<script src="../script/huaqie.api.js"></script>
+
+<script type="text/javascript">
+  var order = {}
+  var steps = {
+    1: '待付款',
+    4: '已付款'
+  }
+	var refund = function() {
+		$('#refund').show()
+    $('#ok-btn').show()
+    $('#cancel-btn').show()
+    $('#show-btn').hide()
+	}
+  var cancel = function() {
+    $('#refund').hide()
+    $('#cancel-btn').hide()
+    $('#ok-btn').hide()
+    $('#show-btn').show()
+    $('#refund').val('')
+  }
+  var refundOk = function() {
+      if(order.step != 4){
+        api.toast({msg:'未付款订单不可退款'})
+          return
+      }
+        var refundAmount = $("#refund").val()
+        if(!refundAmount){
+          api.toast({msg:'退款金额不能为空'})
+          return
+        }else if(refundAmount < 0){
+          api.toast({msg:'退款金额不能小于零'})
+          return
+        }else if(refundAmount > order.amount){
+          api.toast({msg:'退款金额不能大于订单金额'})
+          return
+        }
+
+       huaqie.post('order/refund', {
+        orderId: api.pageParam.orderId,
+        refund: refundAmount
+       }, function(ret){
+        api.toast({
+          msg: '退款成功'
+        })
+        update()
+        cancel()
+       })
+  }
+  var update = function() {
+    huaqie.get('order/findById', {
+    orderId: api.pageParam.orderId
+  }, function(ret){
+    order = ret.data
+    var channel = '未知'
+    if(ret.data.channel.indexOf('wepay') == 0)
+      channel = '微信支付'
+    else if(ret.data.channel.indexOf('alipay') == 0)
+      channel = '支付宝支付'
+    $('#name').text('收款人：'+ret.data.people.name)
+    $('#amount').text('¥'+ret.data.amount.toFixed(2))
+    $('#created').text('收款时间：'+moment(ret.data.created).format('YYYY年MM月DD日 HH:mm:ss'))
+    $('#step').text('支付状态：'+((ret.data.step in steps)?steps[ret.data.step]:'未知'))
+    $('#channel').text('支付方式：'+channel)
+    $('#note').text('备注内容：' + (ret.data.basic.note || '无'))
+    // $('#refundAmount').text('退款金额：'+((ret.data.extra.refund)?ret.data.extra.refund:0))
+    if(order.step == 4)
+      $('#show-btn').show()
+  })
+  }
+apiready = function(){
+    update()
+}
+
+  
+</script>
+</body>
+</html>

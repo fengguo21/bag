@@ -1,0 +1,137 @@
+<!--pages/main/index.wxml-->
+<view class="container-box">
+
+
+
+<view class="goods-tab-box">
+       <view class="goods-tab-nav {{curIndex == 0 ?'on':''}}" catchtap="changeTab" data-index="0">业绩</view>
+        <view class="goods-tab-nav {{curIndex == 1 ?'on':''}}" bindtap="changeTab" data-index="1">订单</view>
+        <view class="goods-tab-nav {{curIndex == 2 ?'on':''}}" bindtap="changeTab" data-index="2">客户</view>
+       
+        <view class="goods-content">
+            <view wx:if="{{curIndex === 0}}">
+              	<view class="img-box">
+			        <image bindtap="previewImg" src="{{path}}" class="qrcode"></image>
+			        <view class="qrcode-right">
+			        	<view>可通过如下两种途径分享拿提成：</view>
+			        	<view>途径1：点击左侧小程序码下载并分享</view>
+			        	<view>途径2：分享小程序首页或商品详情页</view>
+                <navigator url="../aboutSales/aboutSales">查看提成说明</navigator>
+			        </view>
+			    </view>
+                <view>
+                <view class="count-box">
+                    <view class="count-column1">
+                    <view>¥{{total}}</view>
+                    累计</view>
+                    <view class="count-column1">
+                      <view>¥{{balance}}</view>
+                      余额</view>
+                    <view class="count-column3">
+                      <view>¥{{frozen}}</view>
+                      冻结</view>
+                  </view>
+			   <button type="primary" class="withdraw-btn" bindtap="goWithdraw"> 提现 </button>
+
+               <view class="index-tab-box">
+               <text class="indexTab-{{(indexTab==0)?'active':''}}" bindtap="changeTransaction" data-index="0">提成明细</text> 
+               <text class="indexTab-{{(indexTab==1)?'active':''}}" bindtap="changeTransaction" data-index="1">提现明细</text>
+               </view>
+
+               <view class="index-box" wx:if="{{indexTab==0}}">
+                     <view class="transaction-item" wx:if="{{transactions.length > 0}}">
+                       <text class="transaction-sort">类型</text>
+                       <text class="transaction-no">金额</text>
+                       <text class="transaction-name">时间</text>
+                       </view>
+                       <view class="transaction-item" wx:for="{{transactions}}" wx:key="{{item}}">
+                       <text class="transaction-sort">{{item.direction}}</text>
+                       <text class="transaction-no">¥{{item.amount}}</text>
+                       <text class="transaction-name">{{item.created}}</text>
+                       </view>
+                       <view class="tips" wx:if="{{transactions.length > 0}}">{{transactionsTips}}</view>
+                       <view class="no-orders" wx:if="{{transactions.length == 0}}">
+                        <image src="../../../image/sales-no-transactions.png"></image>
+                        你还没有提成~
+                      </view>
+               </view>
+
+               <view class="index-box" wx:else>
+                     <view class="transaction-item" wx:if="{{withdraws.length > 0}}">
+                       <text class="transaction-sort">类型</text>
+                       <text class="transaction-no">金额</text>
+                       <text class="transaction-name">时间</text>
+                       </view>
+                       <navigator url="../withdrawDetail/withdrawDetail?withdrawId={{item.withdrawId}}" class="transaction-item" wx:for="{{withdraws}}" wx:key="{{item}}">
+                       <text class="transaction-sort">{{item.direction}}</text>
+                       <text class="transaction-no">¥{{item.amount}}</text>
+                       <text class="transaction-name">{{item.created}}</text>
+                       </navigator>
+                       <view class="tips" wx:if="{{withdraws.length > 0}}">{{withdrawsTips}}</view>
+                       <view class="no-orders" wx:if="{{withdraws.length == 0}}">
+                        <image src="../../../image/sales-no-withdraws.png"></image>
+                        你还没有提现~
+                      </view>
+               </view>
+
+
+               </view>
+			  
+            </view>
+            <view wx:if="{{curIndex === 1}}">
+              <view class="orders-box">
+    
+        <view class="orders-list" wx:if="{{orders.length > 0}}" wx:for="{{orders}}" wx:key="index">
+            <view class="orders-number">客户：{{item.people.name}}</view>
+             <view class="orders-detail">
+                <image src="{{item.basic.avatar}}" style="border-radius:0"></image>
+                <view>{{item.basic.title}}</view>
+                <view class="">实付：￥{{item.amount}}</view>
+                <text class="orders-status {{item.stepClass}}">{{item.stepTitle}}</text>
+            </view>
+
+
+            
+        </view>
+        <view class="no-orders" wx:if="{{orders.length == 0}}">
+          <image src="../../../image/sales-no-orders.png"></image>
+          你的客户还没有下过订单~
+        </view>
+        <view class="tips" wx:if="{{orders.length > 0}}">{{orderTips}}</view>
+    </view>
+            </view>
+            <view wx:if="{{curIndex === 2}}">
+            <view class="orders-box">
+			        <view class="orders-list" wx:if="{{clients.length > 0}}" wx:for="{{clients}}" wx:key="index">
+			           
+			             <view class="orders-detail">
+			                <image src="{{item.basic.avatar}}"></image>
+			                <view style="margin-top:10rpx;">{{item.basic.name}}</view>
+			                <view class="">加入时间：{{item.created}}</view>
+			            </view>
+			           
+			        </view>
+			        <view class="no-orders" wx:if="{{clients.length == 0}}">
+			          <image src="../../../image/sales-no-clients.png"></image>
+			          你还没有客户~
+			        </view>
+              <view class="tips" wx:if="{{clients.length > 0}}">{{clientTips}}</view>
+			    </view>
+            </view>
+        </view>
+    </view>
+
+
+
+
+
+
+
+    
+
+</view>
+
+<!--
+<view  class="mask"></view>
+<view class="canvas-box"></view>
+-->

@@ -1,0 +1,7 @@
+<view class="main">
+	<view class="title"><image src="../../../image/logo.png" mode="widthFix"></image>{{ title }}</view>
+	<view class="text">{{ text }}</view>
+	<view class="phone">联系电话：{{ phone }}</view>
+	<view class="address">地址：{{ address }}</view>
+	<view class="company">{{ company }}</view>
+</view>

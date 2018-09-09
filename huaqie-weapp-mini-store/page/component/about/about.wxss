@@ -1,0 +1,26 @@
+@import '../../common/common.wxss';
+
+.main{
+    padding: 30rpx;
+}
+.title{
+	text-align: center;
+	font-weight: bold;
+	padding-bottom: 20rpx;
+	border-bottom: 4rpx solid #eeeeee;
+}
+.title image{
+  display: block;
+  margin:0 auto;
+  width: 40%;
+  margin-top: 20rpx;
+  margin-bottom: 40rpx;
+}
+.text{
+	margin: 30rpx 0;
+}
+.company{
+	margin-top: 30rpx;
+	text-align: center;
+	color: gray;
+}

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>云API</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <script src="../script/jquery.min.js"></script>
+    <script src="../script/fastclick.min.js"></script>
+    <script>
+        $(function() {  
+            FastClick.attach(document.body);  
+        });  
+    </script>
+    <link href="../css/sweetalert2.min.css" rel="stylesheet">
+    <style>
+       @charset "UTF-8";
+
+
+
+
+html{
+    height: 100%;
+    font-size: 70%;
+    background-color: white;
+    font-family:Helvetica;
+}
+    .iconfont {font-size: 1.6rem;}
+.maxhtml {
+    font-size: 82.5%;
+}
+body{
+    height: 100%;
+    min-width: 300px;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    font-size: 62.5%;
+    background-color: white;
+}
+ul {padding: 0;margin: 0;}
+
+
+#container {
+    overflow: hidden;
+    padding: 5px 5px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    max-width: 500px;
+}
+.calc {
+    /*width: 300px;
+    max-width: 600px;*/
+    margin: 0px auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    flex-wrap: wrap;
+    height: 100%;
+    -webkit-transition: all .8s;
+    transition: all .5s;
+    overflow: hidden;
+    z-index: 0;
+    position: relative;
+    /*box-shadow: 2px 2px 2px rgba(0,0,0,0.5);*/
+}
+.flexbox {
+    width: 100%;
+    height: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.maxCalc {
+    width: 60%;
+    height: 100%;
+}
+
+#top {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+   /* height: 120px;*/
+    text-shadow: 0 2px 1px rgba(0,0,0,0.2);
+}
+#win-tool {
+    background-color: #ccc;
+    min-height: 35px;
+    position: relative;
+    padding: 7px 8px 0 8px;
+    text-align: right;
+    width: 100%;
+    box-sizing: border-box;
+}
+#win-tool span {
+    width: 1.5rem;
+    height: 1.5rem;
+    line-height: 1.5rem;    
+    border-radius: 50%;
+    margin-right: 3px;
+    text-align: center;
+    display: inline-block;
+    /*color: #fff;
+    font-weight: bold;*/
+    cursor: default;
+    position: absolute;
+    top: 8px;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+#close {
+    background-color: #FC5652;
+    left: 8px;
+}
+#max {
+    background-color: #FDBC40;
+    left: 34px;
+}
+#resize {
+    /*background-color: #34C749;*/
+   font-size: 3rem;
+   left: 60px;
+   display: none !important;
+}
+#win-tool a {
+    background: hsl(0, 0%, 80%);
+    display: inline-block;
+    width: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    /*line-height: 1.9rem;*/
+    color: inherit;
+    text-decoration: none;
+    /*font-size: 1.9rem;*/
+    font-family: "Microsoft Yahei", "Hiragino Sans GB", Helvetica, "Helvetica Neue", "微软雅黑", Tahoma, Arial, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    margin-left: .5rem;    
+}
+#win-tool a:hover,
+#win-tool a:active {
+    color: red;
+}
+.iconfont.history,
+.iconfont.about,
+.iconfont.change,
+.iconfont.skin{
+    color: hsl(0, 0%, 30%);
+}
+.iconfont.news {
+    color: #F5923E;
+}
+#result {
+    min-height: 90px;
+    width: 100%;
+    height: 100%;
+    background-color: hsl(0, 0%, 50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: #FFF;
+    overflow: auto;
+    box-sizing: border-box;
+    /*text-shadow: 0 2px 1px rgba(0,0,0,0.3);*/
+    text-align: right;
+}
+#result > #express {
+    font-size: 2rem;
+}
+#result div {
+    padding: 0 5px;
+    box-sizing: border-box;
+}
+#result > #res {
+    font-size: 4.5rem;
+    font-weight: 600;
+    width: 100%;
+}
+#bottom {
+    font-weight: 600;
+    width: 100%;
+    flex: 1;
+    /*text-shadow: 0 2px 1px rgba(0,0,0,0.3);*/
+    height: 100%;
+    border: 1px solid #f2f2f2;
+}
+#bottom .row {
+    height: 20%;
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    margin-bottom: -1px;
+}
+.mb{margin-bottom: 0 !important;}
+#bottom .row span:first-child {
+    border-left: 0;
+}
+#bottom .row:last-child span {
+    border-bottom: 0;
+}
+#bottom .row span{
+    height: 100%;
+    width: 25%;
+    background-color: #F2F2F2;
+    border: 1px solid #fff;
+    border-right: 0;
+    color:hsl(0, 17%, 20%);
+    font-size: 2rem;
+    line-height: 5rem;
+    cursor: default;
+    -webkit-user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#win-tool span:active,
+#bottom .row span:active,
+#bottom .row span.tool:active{
+    background-color: red;
+    color: #fff;
+}
+#bottom .row span.tool {
+    background-color: #F5923E;
+    color: #fff;
+}
+#bottom .row span.cheng,
+#bottom .row span.chu,
+#bottom .row span.add,
+#bottom .row span.eq {
+    font-size: 2.5rem;
+}
+#bottom .row span.jiang {
+    font-size: 1.9rem;
+}
+#bottom .row span.zero {
+    width: 50.4%;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 11%;
+}
+
+
+/************** 历史记录 *****************/
+#historyBox {
+    background: hsl(0, 0%, 95%);
+    width: 100%;
+    height: 71%;
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    bottom: 0;
+    /*box-shadow: 0px 0px 10px #000;*/
+    -webkit-transition: all .3s;
+    transition: all .3s;
+    -webkit-transform: translateY(102%);
+    transform: translateY(102%);
+    font-family: "Microsoft Yahei", "Hiragino Sans GB", Helvetica, "Helvetica Neue", "微软雅黑", Tahoma, Arial, sans-serif;
+}
+#historyBox .con {
+    height: 91%;
+    overflow-y: auto;
+}
+#historyBox .remove {
+    height: 28px;
+    background: hsl(0, 0%, 88%);
+    text-align: right;
+    box-sizing: border-box;
+    border-top: 1px solid transparent;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+}
+#historyBox .remove a{
+    color: inherit;
+    text-decoration: none;
+    padding-right: 5px;
+}
+/*#historyBox .remove .icon_del {
+    display: inline-block;
+    width: 35px;
+    height: 28px;
+    background: url("../images/delete1.png") no-repeat;
+    box-sizing: border-box;
+    background-position: center center;
+}
+#historyBox .remove .icon_del:hover {
+    background-color: #ccc;
+}
+#historyBox .remove .icon_del:active{
+    background-color: red;
+}*/
+#historyBox ul {
+    padding: 0 5px 0 5px;
+    color: hsl(0, 0%, 50%);
+    font-size: 1rem;
+}
+#historyBox ul li {
+    height: 45px;
+    text-align: right;
+    line-height: 45px;
+    font-size: 2.2rem;
+    font-family: "Microsoft Yahei", "Hiragino Sans GB", Helvetica, "Helvetica Neue", "微软雅黑", Tahoma, Arial, sans-serif;
+    background: hsl(0, 0%, 95%);
+    color: #000;
+    overflow: auto;
+}
+#historyBox ul li:hover {
+    background:hsl(0, 0%, 88%);
+}
+
+#updateApp {
+    background-color: #ccc;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    display: none;
+}
+#downloadApp {
+    
+}
+
+.miniCalc{
+    width: 200px;
+    height: 200px;
+    font-size: 40%;
+}
+
+/*小屏*/
+/*
+@media (max-width: 500px){
+    html {
+        font-size: 80%;
+        font-family:Helvetica;
+    }
+    .iconfont {font-size: 1.6rem;}
+    #container {
+        height: 75%;
+        padding: 0;
+    }
+    .calc {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        border-radius: 0;
+    }
+    #close,#max {display: none !important;}
+    #win-tool a {font-size: 1rem;line-height: 1.9rem;}
+    #resize {
+        left: 8px;
+        font-size: 3.5rem;
+        line-height:1.1rem !important;
+        box-shadow: none !important;
+        display: inline-block !important;}
+    #bottom .row {margin: 0;}
+    #bottom .row span {
+        box-sizing: border-box;
+        border-top: 0;
+    }
+    #bottom .row span.cheng {
+        font-size: 2.1rem;
+    }
+    #bottom .row span.zero {
+        width: 50.1%;
+    }
+    
+    #updateApp {display: block;}
+    #downloadApp {display: none;}
+}
+*/
+.updateAppIconRotate {
+    display: inline-block;
+    animation: update .5s linear infinite;
+}
+@-webkit-keyframes name{
+    from{transform: rotate(0deg);}
+    to{transform: rotate(360deg);}
+}
+@-moz-keyframes name{
+    from{}
+    to{}
+}
+@keyframes update{
+    from{transform: rotate(0deg);}
+    to{transform: rotate(360deg);}
+}
+
+.button{
+        	padding: 10px 20px;
+        	border:2px solid #EF6C00;
+        	background-color: #FFA726;
+        	color: white;
+        	font-size: 19px;
+        	width: 100px;
+        	margin: 0 5px;
+        	border-radius: 10px;
+        	text-align: center;
+        }
+
+    .button:focus{outline:none;}
+    .cash-code{
+        background-color: #eee;
+        border-color: #ccc;
+        padding: 10px;
+        width: auto;
+    }
+    .cash-code img{
+        margin-right: 0 !important;
+    }
+
+    #note{
+        width: 96%;
+       
+        box-sizing: border-box;
+        height: 40px;
+        margin-right:2%;
+        margin-left: 2%;
+        /*margin-left: 3%;*/
+        line-height: 40px;
+        border:1px solid #ccc;
+        border-radius: 2px;
+        margin-top: 25px;
+        font-size: 14px;
+        color:#4d4d4d;
+        padding-left: 10px;
+       
+
+
+    }
+    #note::-webkit-input-placeholder{
+        color: #999
+    }
+    </style>
+
+</head>
+<body>
+<div id="container">
+            <div id="calc" class="calc">
+                <div id="top">
+                   
+                    <div id="result">
+                        <div id="express"></div>
+                        <div id="res">0</div>
+                    </div>
+                </div>
+                <div id="bottom">
+                    <div class="row">
+                        <span id="reset" data-number="C">CE</span>
+                        <span id="remove" data-number="←">←</span>
+                        <span data-number="%">%</span>
+                        <span data-number="/" class="tool chu">÷</span>
+                    </div>
+                    <div class="row">
+                        <span data-number="7">7</span>
+                        <span data-number="8">8</span>
+                        <span data-number="9">9</span>
+                        <span data-number="*" class="tool cheng">×</span>
+                    </div>
+                    <div class="row">
+                        <span data-number="4">4</span>
+                        <span data-number="5">5</span>
+                        <span data-number="6">6</span>
+                        <span data-number="-" class="tool jiang">&minus;</span>
+                    </div>
+                    <div class="row">
+                        <span data-number="1">1</span>
+                        <span data-number="2">2</span>
+                        <span data-number="3">3</span>
+                        <span data-number="+" class="tool add">+</span>
+                    </div>
+                    <div class="row">
+                        <span data-number="0" class="zero">0</span>
+                        <span data-number="." class="dian">&bull;</span>
+                        <span id="equals" data-number="=" class="tool eq" onclick="do3">=</span>
+                    </div>
+                </div>
+                <div>
+                    <input type="text" name="note" placeholder="请输入备注内容(可不填)" id="note">
+                </div>
+                <div id="historyBox">
+                    <div class="con">
+                        <ul></ul>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+
+        <!--移动端拨号功能-->
+      <div style="text-align:center">
+        <a href="javascript:void(0)" onclick="do4('wepay')" class="button cash-code"><img src="../image/wechat.svg" style="width:24px;vertical-align:top;margin-right:5px"></a>
+        <a href="javascript:void(0)" onclick="do4('alipay')" class="button cash-code"><img src="../image/alipay.png" style="width:24px;vertical-align:top;margin-right:5px"></a>
+
+      <a href="javascript:void(0)" onclick="do3()" class="button"><img src="../image/scan-money.svg" style="width:24px;vertical-align:top;margin-right:5px">收银</a>
+</div>
+
+    <div style="text-align:center;margin-top: 20px; color:gray">
+    <p >上海昀活网络科技有限公司</p>
+    <a href="tel:02167866532">客服电话：021-67866532</a>
+    </div>
+
+<script src="../script/store.min.js"></script>
+<script src="../script/huaqie.api.js"></script>
+
+<script type="text/javascript">
+    var doing = false
+    var iPhones1 = ['iPhone', 'iPhone 3G', 'iPhone 3GS', 'iPhone 4', 'iPhone 4S']
+    var iPhones2 = ['iPhone 5', 'iPhone 5C', 'iPhone 5S', 'iPhone SE']
+    //console.log($('#bottom').height()+' '+$('#calc').height())
+    //$('#bottom').height($('#calc').height())
+    apiready = function(){
+        //alert($('#container').height()+' '+api.winHeight)
+        //$('#calc').height(api.winHeight*0.65)
+        /*
+        if(iPhones1.indexOf(api.deviceModel) != -1)
+            $('#bottom').height($('#calc').height()*0.6)
+        else if(iPhones2.indexOf(api.deviceModel) != -1)
+            $('#bottom').height($('#calc').height()*0.67)
+        */
+
+    }
+
+    var read = function(text) {
+        var speechRecognizer = api.require('speechRecognizer');
+        speechRecognizer.read({
+            readStr: text,
+            speed: 60,
+            volume: 60,
+            voice: 1,
+            rate: 16000
+        }, function(ret, err) {
+            if (ret.status) {
+                //ret.speakProgress
+            } else {
+                //api.alert({ msg: err.msg });
+            }
+        });
+    }
+    	
+       function do2(){
+        var amount = Number($("#res").text()).toFixed(2)
+
+        var note = $('#note').val()
+            if(isNaN(amount) || amount <= 0){
+                api.toast({
+                    msg: '收款金额错误'
+                })
+                return
+            }
+        var app = store.get('app')
+        var me = store.get('me')
+        if(doing){
+            api.toast({
+                msg: '请稍候再试'
+            })
+            return
+        }
+        doing = true
+        huaqie.post('order/createService', {
+                amount: amount,
+                title: app.basic.title,
+                note: note,
+                name: me.basic.name
+            }, function(ret){
+                doing = false
+                $('#note').val() = ''
+                   swal({
+              text: '用微信或支付宝扫码支付',
+              imageUrl: 'http://pan.baidu.com/share/qrcode?w=200&h=200&url='+app.extra.url+'/index.html?orderId='+ret.data.orderId,
+              
+              showConfirmButton: false,
+              animation: true
+            })
+       }, function(){
+        doing = false
+       })
+        }
+
+        function do4(channel){
+        var amount = Number($("#res").text()).toFixed(2)
+        var note = $('#note').val()
+        console.log(note)
+            if(isNaN(amount) || amount <= 0){
+                api.toast({
+                    msg: '收款金额错误'
+                })
+                return
+            }
+        var app = store.get('app')
+        var me = store.get('me')
+        if(doing){
+            api.toast({
+                msg: '请稍候再试'
+            })
+            return
+        }
+        doing = true
+        huaqie.post('order/createService', {
+                amount: amount,
+                title: app.basic.title,
+                note: note,
+                name: me.basic.name
+            }, function(ret){
+                huaqie.post((channel == 'wepay')?'payment/wechatNativePay':'payment/alipayQRPay', {
+                    orderId: ret.data.orderId
+                }, function(ret){
+                    doing = false
+                    $('#note').val() = ''
+                   swal({
+                      text: (channel == 'wepay')?'用微信扫码支付':'用支付宝扫码支付',
+                      imageUrl: 'http://pan.baidu.com/share/qrcode?w=200&h=200&url='+((channel == 'wepay')?ret.data.code_url:ret.data.qr_code),
+                      
+                      showConfirmButton: false,
+                      animation: true
+                    })
+                }, function(){
+                    doing = false
+                })
+       }, function(){
+        doing = false
+       })
+        }
+
+
+    function do3(){
+        var amount = Number($("#res").text()).toFixed(2)
+        var note = $('#note').val()
+            if(isNaN(amount) || amount <= 0){
+                api.toast({
+                    msg: '收款金额错误'
+                })
+                return
+            }
+            var scanner = api.require('scanner');
+            scanner.open({
+                sound: 'widget://audio/5383.wav'
+            }, function(ret, err) {
+                if (ret && ret.eventType == 'success') {
+                    var code = ret.msg
+                    var app = store.get('app')
+                    var me = store.get('me')
+                    if(doing){
+                        api.toast({
+                            msg: '请稍候再试'
+                        })
+                        return
+                    }
+                    doing = true
+                    huaqie.post('order/createService', {
+                        amount: amount,
+                        title: app.basic.title,
+                        note: note,
+                        name: me.basic.name
+                    }, function(ret){
+                        var channel = (code[0] == 1)?'wechatMicroPay':'alipayMicroPay'
+                        huaqie.post('payment/'+channel, {
+                            orderId: ret.data.orderId,
+                            authCode: code
+                        }, function(ret){
+                            doing = false
+                            $('#note').val() = ''
+                        }, function(){
+                            doing = false
+                        })
+                    }, function(){
+                        doing = false
+                    })
+                } else {
+                    //alert(JSON.stringify(err));
+                }
+            });
+        }
+    </script>
+
+    <script src="../script/zepto.min.js"></script>
+    <script src="../script/fx.js"></script>
+    <script src="../script/touch.js"></script>
+    <script src="../script/common.js"></script>
+    <script src="../script/calc.js"></script>
+    <script src="../script/sweetalert2.min.js"></script>
+</body>
+</html>

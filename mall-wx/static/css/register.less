@@ -1,0 +1,116 @@
+@bordercolor: #f6f6f6;
+  .loginbox {
+    padding: 0 .3125rem 0.1rem .3125rem;
+    .inputbox {
+      border: 1px solid @bordercolor;
+      border-radius: @radius;
+      height: 1.2rem;
+      line-height: 1.2rem;
+      margin-bottom: .3125rem;
+      padding-left: 1.25rem;
+      input[type="text"],
+      input[type="date"],
+      select {
+        border: none;
+        border-left: 1px solid @bordercolor;
+        height: 100%;
+        padding-left: .28125rem;
+        width: 95%;
+        -webkit-appearance: none;
+        background: #fff;
+      }
+      select {
+       background: url(~assets/images/mc/icon-arror.png) right center no-repeat;background-size:auto 0.16rem;
+      }
+    }
+    h3 {
+      text-align: center;
+      font-size: @ttsize;
+      font-weight: normal;
+      padding: .625rem 0 .390625rem 0;
+    }
+    .inputbox1 {
+      background: url(~assets/images/mc/icon-usr.jpg) .234375rem center no-repeat;
+      background-size: .625rem auto;
+    }
+    .inputbox2 {
+      background: url(~assets/images/mc/icon-sex.jpg) .234375rem center no-repeat;
+      background-size: .625rem auto;
+    }
+    .inputbox3 {
+      background: url(~assets/images/mc/icon-card.jpg) .234375rem center no-repeat;
+      background-size: .625rem auto;
+    }
+    .inputbox4 {
+      background: url(~assets/images/mc/icon-baby.jpg) .234375rem center no-repeat;
+      background-size: .625rem auto;
+    }
+    .inputbox5 {
+      background: url(~assets/images/mc/icon-birthday.jpg) .234375rem center no-repeat;
+      background-size: .625rem auto;
+    }
+    .inputbox6 {
+      background: url(~assets/images/mc/icon-favor.jpg) .234375rem center no-repeat;
+      background-size: .625rem auto;
+    }
+    .inputbox7 {
+      background: url(~assets/images/mc/icon-addr.jpg) .234375rem center no-repeat;
+      background-size: .625rem auto;
+    }
+  }
+
+  .ttbox {
+    background: #f4f4f4;
+    padding: .3125rem 0 .625rem 0;
+    font-size: @ttsize;
+    .el-col {
+      text-align: center;
+      border-bottom: 3px solid #ccc;
+      padding-bottom: .546875rem;
+      position: relative;
+    }
+    .el-col span {
+      position: absolute;
+      left: 50%;
+      margin-left: -.3125rem;
+      bottom: -.3125rem;
+      border-radius: 50%;
+      width: .625rem;
+      height: .625rem;
+      line-height: .625rem;
+      background: #ccc;
+      color: #fff;
+    }
+    .el-col.active span {
+      background: @iconcolor;
+    }
+    .el-col.active {
+      border-color: @iconcolor;
+    }
+  }
+  @btnheight: 1.171875rem;
+  .btn_step {
+   /*  background: @iconcolor;
+    color: #fff;
+    width: 100%;
+    text-align: center;
+    font-size: @btnbigsize;
+    height: 1.21875rem;
+    line-height: 1.21875rem;
+    border: none;
+    border-radius:0px; */
+    background: @iconcolor;
+    width: 100%;
+    height: @btnheight;
+    color: #fff;
+    line-height: @btnheight;
+    font-size: @btnbigsize;
+    text-align: center;
+    border: none;
+    border-radius:0px;
+    margin-top:.3125rem;
+  }
+
+  input:disabled {
+    background: #ccc;
+  }

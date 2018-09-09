@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <style>
+        body, html{
+            height: auto
+        }
+        .aui-card{
+            margin-top: 10px;
+        }
+        .aui-pull-right{
+            padding-right: 15px;
+            vertical-align: middle;
+        }
+        .aui-switch-title.specil {
+            width: 100%;
+        }
+        #avatar {
+            display: block;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+        }
+        .flex-center {  
+            margin: 0 auto;
+            text-align: center;
+        }
+        .mgt-5 {
+            margin-top: 5px;
+        }
+        .aui-btn.aui-btn-info.main-btn {
+            background: #ef6c02;
+            border-color: #ef6c02;
+            padding: 10px 20px;
+            border-radius: 20px;
+            width: 50%;
+            margin-bottom: 20px;
+        }
+        .aui-btn.aui-btn-info.set-btn {
+            background: #ff8b2e;
+            border-color: #ff8b2e;
+            border-radius: 20px;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="aui-content aui-card">
+        <ul class="aui-list-view">
+            <li class="aui-list-view-cell aui-switch-body">
+                <div class="aui-switch-title specil" style='font-size: 14px'>成员头像</div>
+                <div>
+                    <img src="https://dn-huaqie.qbox.me/483023546.jpg" class='flex-center' id='avatar' />
+                    <div class='flex-center mgt-5'>
+                        <div onclick="openPic()" class="aui-btn aui-btn-info set-btn"><span class="aui-iconfont aui-icon-camera"></span>选择头像</div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="aui-content aui-card">
+        <ul class="aui-list-view form-style">
+            <li class="aui-list-view-cell aui-switch-body">
+                <div class="aui-input-row">
+                    <label class="aui-input-addon">成员姓名</label>
+                    <input id='name' type="text" class="aui-input" placeholder="请输入成员姓名" />
+                </div> 
+                <div class="aui-input-row">
+                    <label class="aui-input-addon">手机号码</label>
+                    <input id='phone' type="number" class="aui-input" placeholder="请输入手机号码" />
+                </div> 
+                <div class="aui-input-row">
+                    <label class="aui-input-addon">初始密码</label>
+                    <input id='password' type="text" class="aui-input" placeholder="请输入初始密码" value='123456'/>
+                </div>
+            </li>  
+        </ul>
+    </div>
+    <div class='flex-center'>
+        <div class="aui-btn aui-btn-info main-btn" onclick='addMember()'>确 认 添 加</div>
+    </div>
+    <!-- <div class="upload">
+        <div class="avatar">
+            <img src="https://dn-huaqie.qbox.me/483023546.jpg" id='avatar' />
+        </div>
+        <div onclick="openPic()" style='height: 100px; width: 100%; text-align:center; background: #f00'>hahahahah</div>
+    </div> -->
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script src="../script/zepto.min.js"></script>
+<script src="../script/store.min.js"></script>
+<script src="../script/huaqie.api.js"></script>
+
+<script type="text/javascript">
+    const options = {
+        type: 'picture',
+        column: 4,
+        classify: true,
+        max: 1,
+        sort: {
+            key: 'time',
+            order: 'desc'
+        },
+        texts: {
+            stateText: '已选择*项',
+            cancelText: '取消',
+            finishText: '完成'
+        },
+        styles: {
+            bg: '#fff',
+            mark: {
+                icon: '',
+                position: 'bottom_left',
+                size: 20
+            },
+            nav: {
+                bg: '#eee',
+                stateColor: '#000',
+                stateSize: 18,
+                cancelBg: 'rgba(0,0,0,0)',
+                cancelColor: '#000',
+                cancelSize: 18,
+                finishBg: 'rgba(0,0,0,0)',
+                finishColor: '#000',
+                finishSize: 18
+            }
+        },
+        exchange: true,
+    }
+    const upload = function() {
+        huaqie.get('people/findRoleByState', {
+            page: 1,
+            size: 10
+        }, function(ret) {
+            if(ret.code){
+                swal('提示', ret.message)
+                return
+            }
+            $('#users').html(template('tpl-user', ret.data))
+            $('#total').text(ret.data.total)
+        })
+    }
+    const Oavatar = $('#avatar');
+    const openPic = function() {
+        const UIMediaScanner = api.require('UIMediaScanner');
+        UIMediaScanner.open(options, function(ret) {
+           if (ret) {
+                if(ret.eventType == 'confirm') {
+                    if(ret.list.length <= 0) {
+                        api.alert({
+                            msg: '至少选择一张图片'
+                        });
+                    } else {
+                        UIMediaScanner.transPath({
+                            path: ret.list[0].path,
+                        }, function(ret, err) {
+                            if (ret) {
+                                uploadAvatar(ret);
+                                // Oavatar.html('123');
+                                // Oavatar.src = 'fs://'+ret.path;
+                            } else {
+                                alert(JSON.stringify(err));
+                            }
+                        });
+                        // const Oavatar = document.getElementById('avatar');
+                        // Oavatar.src = ret.list[0].path;
+                        // alert(ret.list[0].path)
+                        // api.alert({
+                        //     msg: $api.byId('avatar')
+                        // })
+                    }
+                } else {
+                    api.alert({
+                        msg: '已取消选择'
+                    });
+                }
+           }
+        }); 
+    }
+    const uploadAvatar = function(ret) {
+        api.ajax({
+            url: "https://g2.huaqie.com/cloud/app/upload",
+            method: 'post',
+            data: {
+                values: {
+                    file: 'file'
+                },
+                files: {
+                   file: ret.path
+                }
+           }
+        }, function(ret, err) {
+            if (ret) {
+                if( ret.code > 0) {
+                    api.alert({ msg: ret.message });
+                    return;
+                }
+                Oavatar.attr('src', ret.data.url)
+                // api.alert({ msg: JSON.stringify(ret) });
+            } else {
+                api.alert({ msg: '网络出错' });
+            }
+        });
+    }
+    const addMember = function() {
+        if($('#name').val() == '') {
+            alert('成员姓名不能为空')
+            return;
+        }
+        if(!validPhone($('#phone').val())) {
+            alert('手机号码格式错误')
+            return;
+        }
+        if($('#password').val() == '') {
+            alert('成员密码不能为空')
+            return;
+        }
+        huaqie.post('people/createRole', {
+            avatar: $('#avatar').attr('src'),
+            name: $('#name').val(),
+            phone: $('#phone').val(),
+            password: $('#password').val(),
+            sex: 0,
+            title: '员工'
+        }, function(ret, err) {
+            if (ret) {
+                if( ret.code > 0) {
+                    api.alert({ msg: ret.message });
+                    return;
+                }
+                api.alert({ msg: '添加成功' }, function(ret, err) {
+                    if(ret) {
+                        api.closeWin();
+                        api.execScript({
+                            name: 'employees',
+                            frameName: 'employees_frame',
+                            script: 'reload();'
+                        });
+                    }
+                });      
+            } else {
+                api.alert({ msg: '网络出错，请稍后再试' });
+            }
+        });
+    }
+    const validPhone = function(data) {
+        const reg = /^(0|86|17951)?(13[0-9]|15[012356789]|18[0-9]|14[57]|17[678])[0-9]{8}$/;
+        if(reg.test(data)) {
+            return true;
+        } else {
+            return false
+        }
+    }
+    apiready = function(){
+        // const avatar = $('#avatar').src;
+        // const name = $('#name').val();
+        // const phone = $('#phone').val();
+        // const password = $('#password').val();
+    };
+</script>
+</html>

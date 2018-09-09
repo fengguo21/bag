@@ -1,0 +1,59 @@
+{
+  "pages": [
+      "page/component/index",
+      "page/component/category/category",
+      "page/component/cart/cart",
+      "page/component/user/user",
+      "page/component/address/address",
+      "page/component/addressUpdate/addressUpdate",
+      "page/component/addressList/addressList",
+      "page/component/qrcode/qrcode",
+      "page/component/withdraw/withdraw",
+      "page/component/withdrawDetail/withdrawDetail",
+      "page/component/aboutSales/aboutSales",
+      "page/component/orders/orders",
+      "page/component/order/order",
+      "page/component/express/express",
+      "page/component/details/details",
+      "page/component/list/list",
+      "page/component/about/about",
+      "page/component/myorders/myorders"
+  ],
+  "window": {
+    "navigationBarTextStyle": "#ffffff",
+    "navigationBarTitleText": "老来青大米",
+    "navigationBarBackgroundColor": "#ffaf0e",
+    "backgroundColor": "#eeeeee",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#b7b7b7",
+    "selectedColor": "#ffaf0e",
+    "borderStyle": "#f5f5f5",
+    "backgroundColor": "#f5f5f5",
+    "borderStyle": "white",
+    "list": [{
+      "pagePath": "page/component/index",
+      "iconPath": "image/store2.png",
+      "selectedIconPath": "image/store.png",
+      "text": "首页"
+    }, {
+      "pagePath": "page/component/cart/cart",
+      "iconPath": "image/cart3.png",
+      "selectedIconPath": "image/cart.png",
+      "text": "购物车"
+    }, {
+      "pagePath": "page/component/user/user",
+      "iconPath": "image/account5.png",
+      "selectedIconPath": "image/account6.png",
+      "text": "我的"
+    }]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000,
+    "uploadFile": 10000,
+    "downloadFile": 10000
+  },
+  "debug": false
+}

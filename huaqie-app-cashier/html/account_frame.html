@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>云API</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <script src="../script/jquery.min.js"></script>
+    <script src="../script/fastclick.min.js"></script>
+    <script>
+        $(function() {  
+            FastClick.attach(document.body);  
+        });  
+    </script>
+    <style type="text/css">
+    body{
+        height: auto;
+    }
+    .aui-img-object{
+        border:2px solid #e3e3e3;
+
+    }
+    .aui-arrow-right span {
+        vertical-align: middle;
+    }
+    .menu-icon{
+        width: 22px;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+    </style>
+
+</head>
+<body>
+
+<div class="aui-content" style="margin-top:15px;">
+    <ul class="aui-user-view aui-in">
+        <li class="aui-user-view-cell aui-img">
+            <img class="aui-img-object aui-pull-left" id="avatar" src="">
+            <div class="aui-img-body">
+                <span><span id="name"></span><em id="role"></em></span>
+                <p class='aui-ellipsis-1' id="company"></p>
+            </div>
+        </li>
+    </ul>
+</div>
+
+
+<div class="aui-content">
+    <ul class="aui-list-view aui-in">
+        <li class="aui-list-view-cell" onclick="go('employees')">
+            <a class=" aui-arrow-right">
+            <img src="../image/employees.png" class="menu-icon"/><span>我的团队</span>
+            </a>
+        </li>
+        <li class="aui-list-view-cell" onclick="go('orders')">
+            <a class=" aui-arrow-right">
+            <img src="../image/orders.png" class="menu-icon"/><span>我的收款</span>
+            </a>
+        </li>
+        <li class="aui-list-view-cell" onclick="go('report')">
+            <a class=" aui-arrow-right">
+            <img src="../image/chart.png" class="menu-icon"/><span>统计报表</span>
+            </a>
+        </li> 
+    </ul>
+    <ul class="aui-list-view aui-in">
+        <li class="aui-list-view-cell" onclick="go('setup')">
+            <a class=" aui-arrow-right">
+            <img src="../image/setup.png" class="menu-icon"/><span>系统设置</span>
+            </a>
+        </li>
+        <li class="aui-list-view-cell" onclick="go('about')">
+            <a class=" aui-arrow-right">
+            <img src="../image/about.png" class="menu-icon"/><span>关于我们</span>
+            </a>
+        </li>
+    </ul>
+    <ul class="aui-list-view aui-in">
+        <li class="aui-list-view-cell" onclick="logout()">
+            <a class=" aui-arrow-right">
+            <img src="../image/logout.png" class="menu-icon"/><span>退出登录</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<script src="../script/jquery.min.js"></script>
+<script src="../script/store.min.js"></script>
+
+<script type="text/javascript">
+    // alert('new change');
+    const go = function (v) {
+        api.openWin({
+            name: v,
+            url: './'+v+'.html'
+        });
+    }
+    const logout = function() {
+        store.clear()
+        api.execScript({
+            name: 'root',
+            script: 'logout()'
+        })
+        go('signIn')
+    }
+    const update = function() {
+        const me = store.get('me')
+        const app = store.get('app')
+        if(!me || !me.peopleId || !app || !app.appId)
+            return
+        $('#name').text(me.basic.name)
+        $('#avatar')[0].src = me.basic.avatar
+        $('#role').text((me.role.level==1)?'管理员':'员工')
+        $('#company').text(app.basic.title)
+    }
+    update()
+</script>
+</body>
+</html>

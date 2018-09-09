@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>云API</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <link href="../css/sweetalert2.min.css" rel="stylesheet">
+    <style type="text/css">
+    #no-results{
+        display: none;
+        padding-top: 33%;
+        color: #999999;
+        text-align: center;
+    }
+    #users{
+        display: block;
+    }
+    </style>
+</head>
+<body>
+
+
+<p class="aui-padded-10">共<span id="total">0</span>位同事</p>
+<div class="aui-content">
+    <ul class="aui-user-view aui-in" id="users">
+    <script id="tpl-user" type="text/html">
+        {{each list value i}}
+        <li class="aui-user-view-cell aui-img" onClick="action('{{i}}')">
+            <img class="aui-img-object aui-pull-left hell-image" style='width: 48px !important; max-height: 48px !important; max-width: inherit !important; height: inherit !important;' src="{{value.basic.avatar}}">
+            <div class="aui-img-body">
+                <span>{{value.basic.name}}<em>{{value.role.title}}</em></span>
+                <p class='aui-ellipsis-1'>{{value.extra.phone}}</p>
+            </div>
+        </li>
+        {{/each}}
+        </script>
+    </ul>
+</div>
+<script src="../script/jquery.min.js"></script>
+<script src="../script/store.min.js"></script>
+<script src="../script/sweetalert2.min.js"></script>
+<script src="../script/template-web.js"></script>
+<script src="../script/huaqie.api.js"></script>
+
+<script type="text/javascript">
+    var page = 1;
+    var members = [];
+    var total = 0
+    const reload = function() {
+        $('#users').html(template('tpl-user', []));
+        huaqie.get('people/findRoleByState', {
+            page: 1,
+            size: 10
+        }, function(ret) {
+            if(ret.code){
+                swal('提示', ret.message)
+                return
+            }
+            if(ret.data.total == 0){
+                $('#no-results').show()
+                return
+            }
+
+            $('#users').show()
+            members = ret.data.list;
+            $('#users').html(template('tpl-user', ret.data))
+            total = ret.data.total; 
+            $('#total').text(ret.data.total)
+        })
+    }
+    const upload = function() {
+        huaqie.get('people/findRoleByState', {
+            page: page,
+            size: 10
+        }, function(ret) {
+            if(ret.code){
+                swal('提示', ret.message)
+                return
+            }
+            members = members.concat(ret.data.list)
+            $('#users').html(template('tpl-user', {list: members}))
+            total = ret.data.total; 
+            $('#total').text(ret.data.total)
+        })
+    }
+    const action = function(index) {
+        const me = store.get('me')
+        if(me.role.level > 1 || members[index].role.level == 1)
+            return
+        
+
+        api.actionSheet({
+            title: '处理员工：'+ members[index].basic.name,
+            cancelTitle: '关闭',
+            buttons: ['删除']
+        }, function(ret, err) {
+            if(ret.buttonIndex == 1){
+                // 删除员工
+                huaqie.post('people/cancelRole', {
+                    peopleId: members[index].peopleId
+                }, function(ret) {
+                    if(ret.code){
+                        alert(ret.message)
+                        return
+                    }
+                    alert('删除成功')
+                    members.splice(index, 1)
+                    total -= 1
+                    $('#users').html(template('tpl-user', {list:members}))
+                    $('#total').text(total)
+                })
+            }
+        });
+    }
+    
+    apiready = function(){
+        upload();
+        api.addEventListener({
+            name : 'scrolltobottom',
+            extra : {
+                threshold : 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+            }
+        }, function(ret, err) {
+            if(total == 0)
+                return
+            if(page * 10 < total){
+                page += 1
+                upload()
+            } else {
+                api.toast({
+                    msg: '没有更多啦'
+                })
+                api.removeEventListener({
+                    name : 'scrolltobottom'
+                })
+            }
+        });
+    }
+    // upload();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+body{ margin:0 auto;padding:0;font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#626262;background:#000000;}
+img{ border:none;}
+center{ background:url(../images/bgfotter.jpg) repeat-x bottom;}
+a{ text-decoration:none;outline:none;}
+h2{margin:0px; font-size:12px;}
+#page{width:1000px;margin:0 auto; /* center on page */
+}
+h3{margin:0px; font-size:12px;}
+h1{font-size:12px;font-weight:200; margin:0 auto;}
+#header{
+	 background:url(../images/bg_header.png) no-repeat left top; padding-top:7px;
+}
+#pk{float:left; width:318px; overflow:hidden}
+#showroom{float:left; width:318px; overflow:hidden}
+#styles{float:left; width:320px; background:url() repeat-x top; overflow:hidden}
+#hr_home{ background:url() repeat-y; float:left; height:400px; width:2px;}
+.clear{clear:both;}
+#menu_bottom{float:left; background:#D0151C;width:930px;*width:1000px;height:24px; line-height:24px; padding-left:30px;}
+#menu_bottom #mnu_bt{float:left; color:#FFF; padding-right:70px;}
+#menu_bottom #mnu_bt a{color:#FFF;}
+
+#footer{background:#FFF url(../images/bgfotter.jpg) 10px 7px no-repeat; height:95px; width:1000px; padding-top:7px;}
+
+
+
+#home_top{
+	width:1000px; padding-left:8px; padding-top:4px; padding-bottom:4px;
+	float:left; background:url() no-repeat; margin-top:10px;
+}
+#content{width:1000px; background:#FFF;}
+#home_conten{
+	float:left;
+	width:684px;
+	padding:0px 0;
+	padding-left:10px;
+	margin-top:10px;
+}
+#left_content{
+	float:left;border-right:1px solid #F7F7F7;min-height:500px;
+	padding:0px 0;
+	width:201px;
+ }
+#type_content{
+	float:left;
+	width:510px;
+	padding:0px 0;
+	margin:0px 0 0 12px;
+}
+#home{width:1000px;float:left;}
+#type{width:1000px;float:left; overflow:hidden; background:#F6F6F6 url() repeat-y 12px top; padding-bottom:25px;}
+#right_type{width:754px;float:left; margin-top:10px;}
+#left_type{ width:216px;float:left;margin-right:20px; padding-left:10px;}
+
+#right{width:260px;float:right; margin-top:10px; margin-right:14px;}
+#left{ width:205px;float:left;margin-left:10px; background:url() no-repeat bottom center; padding-bottom:60px; margin-top:10px;}
+#mid{ width:727px; margin-left:19px; float:left;}
+#banner_footer{ float:right; width:450px; overflow:hidden;}
+#banner_footer_sub{float:left;}
+/*-detail--*/
+/*phĂ¢n trang*/
+.phantrang{text-align:center; font-size:11px; margin-top:25px;}
+.page{
+	color:#FFF;
+	background:#B4B4B4;
+	padding:1px 5px;}
+.page a{
+	color:#474747;
+}
+.pageselect{
+	padding:1px 5px;
+	background:#D0151C;
+	color:#FFF;
+}
+.pageselect a{color:#FFF;}
+.form-wrap {
+	width: 60%;
+	margin-top: 20px;
+}
+.text-nowrap {
+	width: 217px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
